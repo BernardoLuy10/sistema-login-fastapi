@@ -1,5 +1,10 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
+import sqlite3
+from fastapi import FastAPI, HTTPException, status
+from database import inserir_usuario
+from security import gerar_hash_senha
+
 
 
 """FastAPI é a classe principal da biblioteca.
@@ -16,12 +21,28 @@ class CadastroUsuario(BaseModel):
     email: EmailStr #Regra de validação para o campo email, que deve ser um email válido.
     senha: str = Field(min_length = 4, max_length = 12) #Regra de validação para o campo senha, que deve ter no mínimo 4 e no máximo 12 caracteres.
 
-@app.post("/usuarios")
+@app.post("/usuarios", status_code=status.HTTP_201_CREATED)
 def cadastrar_usuario(usuario: CadastroUsuario):
+    nome = usuario.nome.strip() #Remove espaços em branco no início e no final do nome.
+    email = str(usuario.email).strip().lower()
+    senha_hash = gerar_hash_senha(usuario.senha) #Gera o hash da senha informada.
+
+    try:
+        usuario_id = inserir_usuario(
+            nome=nome,
+            email=email,
+            senha_hash=senha_hash
+        )
+    except sqlite3.IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="E-mail já cadastrado."
+        )
     return{
-        "mensagem": "Dados reecebidos com sucesso",
-        "nome": usuario.nome,
-        "email": usuario.email
+        "mensagem": "Usuário cadastrado com sucesso.",
+        "id": usuario_id,
+        "nome": nome,
+        "email": email
     }
 
 @app.get("/")
