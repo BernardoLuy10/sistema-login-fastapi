@@ -1,4 +1,4 @@
-from database import buscar_usuario_por_email, listar_usuarios
+from app.models.usuario_model import buscar_usuario_por_email, listar_usuarios
 email_procurado = "bernardo@gmail.com.br"
 usuario = buscar_usuario_por_email(email_procurado)
 if usuario is not None:

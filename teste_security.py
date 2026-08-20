@@ -1,4 +1,4 @@
-from security import gerar_hash_senha, verificar_senha
+from app.core.security import gerar_hash_senha, verificar_senha
 
 senha_teste = "senha123"
 senha_hash = gerar_hash_senha(senha_teste)

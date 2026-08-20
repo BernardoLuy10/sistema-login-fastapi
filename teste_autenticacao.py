@@ -1,5 +1,5 @@
-from database import buscar_usuario_para_autenticacao
-from security import verificar_senha
+from app.models.usuario_model import buscar_usuario_para_autenticacao
+from app.core.security import verificar_senha
 
 email_informado = "hash@gmail.combr"
 senha_informada = "senha123"

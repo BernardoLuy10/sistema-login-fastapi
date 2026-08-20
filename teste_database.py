@@ -1,5 +1,6 @@
-from database import criar_tabela, inserir_usuario
-from security import gerar_hash_senha
+from app.models.usuario_model import inserir_usuario
+from app.database import criar_tabela
+from app.core.security import gerar_hash_senha
 
 criar_tabela()
 

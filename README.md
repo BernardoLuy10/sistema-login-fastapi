@@ -12,17 +12,18 @@ Em desenvolvimento.
 - Validação de dados com Pydantic;
 - Criação do banco de dados SQLite;
 - Criação da tabela de usuários;
-- Cadastro de usuários diretamente no banco;
+- Cadastro de usuários integrado à API;
+- Hash seguro de senhas com Argon2;
+- Verificação de senhas;
 - Restrição de e-mail único;
+- Tratamento de e-mail duplicado;
 - Consulta de usuário por e-mail;
-- Listagem de usuários cadastrados.
+- Listagem de usuários cadastrados;
+- Organização inicial em arquitetura MVC;
+- Separação das camadas Model, View, Controller, Schema e Core.
 
 ## Funcionalidades planejadas
 
-- Hash seguro de senhas;
-- Integração da rota de cadastro com o banco;
-- Tratamento de erros da API;
-- Organização em arquitetura MVC;
 - Confirmação de e-mail por código;
 - Login e autenticação com token;
 - Recuperação e alteração de senha;
@@ -37,9 +38,32 @@ Em desenvolvimento.
 - Git e GitHub.
 
 ## Como executar
-
 Crie e ative um ambiente virtual:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
+
+Instale as dependências:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+Crie as tabelas do banco:
+
+```powershell
+python -m app.database
+```
+
+Execute a API:
+
+```powershell
+fastapi dev app/main.py
+```
+
+Acesse a documentação interativa:
+
+```text
+http://127.0.0.1:8000/docs
+```

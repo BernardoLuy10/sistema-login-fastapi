@@ -1,25 +1,7 @@
-import sqlite3
-NOME_BANCO = "sistema_login.db"
-
-def criar_tabela():
-    with sqlite3.connect(NOME_BANCO) as conexao:
-        cursor = conexao.cursor()
-        #Abaixo estão as colunas do banco de dados, com suas respectivas regras de validação, 
-        # email_confirmado é um campo booleano, que indica se o email do usuário foi confirmado ou não através de 0 ou 1
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS usuarios (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome TEXT NOT NULL,
-                email TEXT UNIQUE NOT NULL,
-                senha_hash TEXT NOT NULL,
-                email_confirmado INTEGER NOT NULL DEFAULT 0, 
-                criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-            )
-            """
-        )
+from app.database import conectar_banco
 
 def inserir_usuario(nome: str, email: str, senha_hash: str):
-    with sqlite3.connect(NOME_BANCO) as conexao:
+    with conectar_banco() as conexao:
         cursor = conexao.cursor()
         cursor.execute(
         
@@ -33,8 +15,7 @@ def inserir_usuario(nome: str, email: str, senha_hash: str):
         return cursor.lastrowid  # Retorna o ID do usuário inserido
 
 def buscar_usuario_por_email(email: str):
-    with sqlite3.connect(NOME_BANCO) as conexao: #aqui é feita a conexão com o banco de dados, utilizando o nome do banco definido na constante NOME_BANCO
-        conexao.row_factory = sqlite3.Row
+    with conectar_banco() as conexao: #aqui é feita a conexão com o banco de dados, utilizando o nome do banco definido na constante NOME_BANCO
         cursor = conexao.cursor() #a função cursor() cria um objeto cursor que permite executar comandos SQL no banco de dados.
         cursor.execute( #Aqui executa-se a consulta SQL
             """
@@ -47,8 +28,7 @@ def buscar_usuario_por_email(email: str):
         return cursor.fetchone()  # Retorna o usuário encontrado ou None se não existir
 
 def listar_usuarios():
-    with sqlite3.connect(NOME_BANCO) as conexao:
-        conexao.row_factory = sqlite3.Row #Linhas retornadas como objetos do tipo Row, permitindo acesso aos dados por nome de coluna.
+    with conectar_banco() as conexao:
         cursor = conexao.cursor()
         cursor.execute(
             """
@@ -60,8 +40,7 @@ def listar_usuarios():
         return cursor.fetchall()
 
 def buscar_usuario_para_autenticacao(email: str):#Função para buscar o usuário no banco de dados, incluindo a senha hash, para fins de autenticação.
-    with sqlite3.connect(NOME_BANCO) as conexao:
-        conexao.row_factory = sqlite3.Row
+    with conectar_banco() as conexao:
         cursor = conexao.cursor()
         cursor.execute(
             """
@@ -72,7 +51,3 @@ def buscar_usuario_para_autenticacao(email: str):#Função para buscar o usuári
             (email,)
         )
         return cursor.fetchone()
-if __name__ =="__main__":
-    criar_tabela()
-    print("Banco de dados criado com sucesso!")
-
