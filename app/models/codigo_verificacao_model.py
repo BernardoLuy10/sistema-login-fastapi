@@ -21,3 +21,31 @@ def inserir_codigo_verificacao(
         )
         conexao.commit()
         return cursor.lastrowid
+
+def buscar_ultimo_codigo_nao_utilizado(
+        usuario_id: int,
+        tipo: str,
+):
+    with conectar_banco() as conexao:
+        cursor = conexao.cursor()
+        cursor.execute(
+            """
+            SELECT
+                id,
+                usuario_id,
+                codigo_hash,
+                tipo,
+                expira_em,
+                utilizado,
+                tentativas,
+                criado_em
+            FROM codigos_verificacao
+            WHERE usuario_id = ?
+                AND tipo = ?
+                AND utilizado = 0
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (usuario_id, tipo)
+        )
+        return cursor.fetchone()
