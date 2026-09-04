@@ -10,7 +10,8 @@ from app.database import conectar_banco
 from app.models.codigo_verificacao_model import(
     buscar_ultimo_codigo_nao_utilizado, 
     inserir_codigo_verificacao, 
-    incrementar_tentativas
+    incrementar_tentativas,
+    marcar_codigo_como_utilizado,
     )
 
 with conectar_banco() as conexao:
@@ -72,9 +73,24 @@ data_expirada = (
 
 assert codigo_esta_expirado(data_expirada)
 
+marcar_codigo_como_utilizado(codigo_id)
+with conectar_banco() as conexao:
+    codigo_utilizado = conexao.execute(
+        """
+        SELECT utilizado
+        FROM codigos_verificacao
+        WHERE id = ?
+        """,
+        (codigo_id,),
+    ).fetchone()
+
+assert codigo_utilizado is not None
+assert codigo_utilizado["utilizado"] == 1
+
 print(f"Código original: {codigo}")
 print(f"ID do registro: {codigo_id}")
 print("Código armazenado e validado com sucesso.")
 print("Validade do código verificada com sucesso.")
 print("Tentativa incorreta registrada com sucesso.")
+print("Código marcado como utilizado com sucesso.")
 

@@ -62,3 +62,16 @@ def incrementar_tentativas(codigo_id: int) -> None:
             (codigo_id,),
         )
         conexao.commit()
+
+def marcar_codigo_como_utilizado(codigo_id: int) -> None:
+    with conectar_banco() as conexao:
+        cursor = conexao.cursor()
+        cursor.execute(
+            """
+            UPDATE codigos_verificacao
+            SET utilizado = 1
+            WHERE id = ?
+            """,
+            (codigo_id,),
+        )
+        conexao.commit()
