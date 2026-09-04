@@ -49,3 +49,16 @@ def buscar_ultimo_codigo_nao_utilizado(
             (usuario_id, tipo)
         )
         return cursor.fetchone()
+    
+def incrementar_tentativas(codigo_id: int) -> None:
+    with conectar_banco() as conexao:
+        cursor = conexao.cursor()
+        cursor.execute(
+            """
+            UPDATE codigos_verificacao
+            SET tentativas = tentativas + 1
+            WHERE id = ?
+            """,
+            (codigo_id,),
+        )
+        conexao.commit()
