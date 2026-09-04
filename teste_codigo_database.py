@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from app.services.codigo_verificacao_service import codigo_esta_expirado
 
 from app.core.security import (
     gerar_codigo_verificacao, 
@@ -41,8 +42,6 @@ registro = buscar_ultimo_codigo_nao_utilizado(
 
 assert registro is not None
 assert registro["id"] == codigo_id
-
-assert registro is not None
 assert registro["usuario_id"] == usuario["id"]
 assert registro["tipo"] == "confirmacao_email"
 assert registro["expira_em"] == expira_em
@@ -50,7 +49,16 @@ assert registro["utilizado"] == 0
 assert registro["tentativas"] == 0
 assert verificar_codigo(codigo, registro["codigo_hash"])
 
+assert not codigo_esta_expirado(registro["expira_em"])
+
+data_expirada = (
+    datetime.now(timezone.utc) - timedelta(minutes=10)
+).isoformat()
+
+assert codigo_esta_expirado(data_expirada)
+
 print(f"Código original: {codigo}")
 print(f"ID do registro: {codigo_id}")
-print(f"Codigo armazenado e validado com sucesso.")
+print("Código armazenado e validado com sucesso.")
+print("Validade do código verificada com sucesso.")
 
