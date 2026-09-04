@@ -7,7 +7,11 @@ from app.core.security import (
     verificar_codigo,
 )
 from app.database import conectar_banco
-from app.models.codigo_verificacao_model import(buscar_ultimo_codigo_nao_utilizado, inserir_codigo_verificacao)
+from app.models.codigo_verificacao_model import(
+    buscar_ultimo_codigo_nao_utilizado, 
+    inserir_codigo_verificacao, 
+    incrementar_tentativas
+    )
 
 with conectar_banco() as conexao:
     usuario = conexao.execute(
@@ -47,6 +51,17 @@ assert registro["tipo"] == "confirmacao_email"
 assert registro["expira_em"] == expira_em
 assert registro["utilizado"] == 0
 assert registro["tentativas"] == 0
+incrementar_tentativas(codigo_id)
+
+registro_atualizado = buscar_ultimo_codigo_nao_utilizado(
+    usuario_id=usuario["id"],
+    tipo="confirmacao_email",
+)
+
+assert registro_atualizado is not None
+assert registro_atualizado["id"] == codigo_id
+assert registro_atualizado["tentativas"] == 1
+
 assert verificar_codigo(codigo, registro["codigo_hash"])
 
 assert not codigo_esta_expirado(registro["expira_em"])
@@ -61,4 +76,5 @@ print(f"Código original: {codigo}")
 print(f"ID do registro: {codigo_id}")
 print("Código armazenado e validado com sucesso.")
 print("Validade do código verificada com sucesso.")
+print("Tentativa incorreta registrada com sucesso.")
 
