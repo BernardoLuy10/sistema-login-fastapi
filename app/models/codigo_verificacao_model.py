@@ -22,7 +22,7 @@ def inserir_codigo_verificacao(
         conexao.commit()
         return cursor.lastrowid
 
-def buscar_ultimo_codigo_nao_utilizado(
+def buscar_ultimo_codigo_verificacao(
         usuario_id: int,
         tipo: str,
 ):
@@ -42,7 +42,6 @@ def buscar_ultimo_codigo_nao_utilizado(
             FROM codigos_verificacao
             WHERE usuario_id = ?
                 AND tipo = ?
-                AND utilizado = 0
             ORDER BY id DESC
             LIMIT 1
             """,

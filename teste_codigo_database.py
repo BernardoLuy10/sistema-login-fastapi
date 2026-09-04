@@ -8,7 +8,7 @@ from app.core.security import (
 )
 from app.database import conectar_banco
 from app.models.codigo_verificacao_model import(
-    buscar_ultimo_codigo_nao_utilizado, 
+    buscar_ultimo_codigo_verificacao, 
     inserir_codigo_verificacao, 
     incrementar_tentativas,
     marcar_codigo_como_utilizado,
@@ -40,7 +40,7 @@ codigo_id = inserir_codigo_verificacao(
     expira_em=expira_em,
 )
 
-registro = buscar_ultimo_codigo_nao_utilizado(
+registro = buscar_ultimo_codigo_verificacao(
     usuario_id=usuario["id"],
     tipo="confirmacao_email",
 )
@@ -54,7 +54,7 @@ assert registro["utilizado"] == 0
 assert registro["tentativas"] == 0
 incrementar_tentativas(codigo_id)
 
-registro_atualizado = buscar_ultimo_codigo_nao_utilizado(
+registro_atualizado = buscar_ultimo_codigo_verificacao(
     usuario_id=usuario["id"],
     tipo="confirmacao_email",
 )
